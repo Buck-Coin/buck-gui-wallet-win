@@ -38,10 +38,12 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -101,14 +103,15 @@ public class ZCashUI
     private SendCashPanel    sendPanel;
     private AddressBookPanel addressBookPanel;
     private MessagingPanel   messagingPanel;
-    
+    private List<Image> imageList;
+
     JTabbedPane tabs;
     public static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
 
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("Buck Wallet 1.1.0.5");
+        super("Buck Wallet 2.0.4");
         
         if (progressDialog != null)
         {
@@ -117,7 +120,9 @@ public class ZCashUI
         
         ClassLoader cl = this.getClass().getClassLoader();
 
-        this.setIconImage(new ImageIcon(cl.getResource("images/Buck.png")).getImage());
+        imageList = new ArrayList();
+        imageList.add(new ImageIcon(cl.getResource("images/Buck.png")).getImage());
+        this.setIconImages(imageList);
 
         Container contentPane = this.getContentPane();
 

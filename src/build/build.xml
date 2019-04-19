@@ -71,6 +71,7 @@
     	    <fileset dir="${src.dir}/resources">  
     	        <include name="images/**"/>
     	        <include name="keys/**"/>
+				<include name="messages/**"/>
     	    </fileset>
     	</copy>
     </target>
@@ -99,7 +100,7 @@
 	
     <target name="ubuntuPackage" depends="jar,copyothers">
     	<mkdir dir="${ubuntu.package.dir}"/>
-	    <deb destfile="${ubuntu.package.dir}/buck-wallet_1.1.0.4.deb"
+	    <deb destfile="${ubuntu.package.dir}/buck-wallet_2.0.4.deb"
 	    	 control="${src.dir}/resources/ubuntu-package"
 	    	 verbose="true">
 

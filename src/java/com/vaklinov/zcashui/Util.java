@@ -354,8 +354,8 @@ public class Util
 	// TODO: We need a much more precise criterion to distinguish T/Z adresses;
 	public static boolean isZAddress(String address)
 	{
-		return (address != null) && 
-			   (address.startsWith("zc") || address.startsWith("zt")) && 
+		return (address != null) &&
+			   (address.startsWith("zc") || address.startsWith("zt") || address.startsWith("zs")) &&
 			   (address.length() > 40);
 	}
 	

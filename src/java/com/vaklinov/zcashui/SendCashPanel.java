@@ -42,10 +42,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.math.RoundingMode;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -94,14 +98,15 @@ public class SendCashPanel
 	private JTextField transactionFeeField     = null;	
 	
 	private JButton    sendButton              = null;
-	
-	private JPanel       operationStatusPanel        = null;
-	private JLabel       operationStatusLabel        = null;
-	private JProgressBar operationStatusProhgressBar = null;
-	private Timer        operationStatusTimer        = null;
-	private String       operationStatusID           = null;
-	private int          operationStatusCounter      = 0;
-	
+
+	private JPanel       operationStatusPanel        						= null;
+	private JLabel       operationStatusLabel        						= null;
+	private JProgressBar operationStatusProhgressBar 						= null;
+	private Timer        operationStatusTimer        						= null;
+	private String       operationStatusID           						= null;
+	private int          operationStatusCounter      						= 0;
+	private Timer		destinationAmountFieldStart							= null;
+    private int			destinationAmountFieldWait							= 3000;
 
 	public SendCashPanel(ZCashClientCaller clientCaller,
 			             StatusUpdateErrorReporter errorReporter,
@@ -342,7 +347,53 @@ public class SendCashPanel
 				}
 			}
 		});
-        
+
+  destinationAmountFieldStart = new Timer(destinationAmountFieldWait, new ActionListener()
+		{
+						@Override
+						public void actionPerformed(ActionEvent e)
+						{
+							try
+							{
+								 String text = destinationAmountField.getText();
+									if (text.length() > 0)
+									{
+										DecimalFormat df = new DecimalFormat("######,###.########");
+										df.setRoundingMode(RoundingMode.CEILING);
+										Number amount = df.parse(text);
+										String formatted = df.format(amount);
+										destinationAmountField.setText(formatted);
+									}
+
+							} catch (Exception ex)
+							{
+								Log.error("Unexpected error", ex);
+								// java.awt.datatransfer.UnsupportedFlavorException: Unicode String
+								//SendCashPanel.this.errorReporter.reportError(ex);
+							}
+						}
+   	});
+
+		destinationAmountField.addKeyListener(new KeyAdapter()
+		{
+
+						@Override
+						public void keyReleased(KeyEvent e)
+						{
+							try
+							{
+									destinationAmountFieldStart.restart();
+									destinationAmountFieldStart.start();
+
+							} catch (Exception ex)
+							{
+								Log.error("Unexpected error", ex);
+								// java.awt.datatransfer.UnsupportedFlavorException: Unicode String
+								//SendCashPanel.this.errorReporter.reportError(ex);
+							}
+						}
+   	});
+
         this.destinationAddressField.addMouseListener(new MouseAdapter()
         {
         	public void mousePressed(MouseEvent e)
@@ -392,7 +443,7 @@ public class SendCashPanel
 		final String sourceAddress = this.lastAddressBalanceData[this.balanceAddressCombo.getSelectedIndex()][1];
 		final String destinationAddress = this.destinationAddressField.getText();
 		final String memo = this.destinationMemoField.getText();
-		final String amount = this.destinationAmountField.getText();
+		final String amount = this.destinationAmountField.getText().replace(",", "");
 		final String fee = this.transactionFeeField.getText();
 
 		// Verify general correctness.
@@ -744,7 +795,7 @@ public class SendCashPanel
 				String urlPrefix = "http://explorer.buck.red/tx/";
 				if (installationObserver.isOnTestNet())
 				{
-					urlPrefix = "https://explorer-testnet.zen-solutions.io/tx/";
+					urlPrefix = "https://explorer-testnet.buck.red/tx/";
 				}
 				Desktop.getDesktop().browse(new URL(urlPrefix + TXID).toURI());
 		    }

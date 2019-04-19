@@ -1,4 +1,4 @@
-# Buck Windows GUI Wallet
+# Buck 2.0.4 Windows GUI Wallet
 
 [Download here](https://github.com/BuckCoin/buck-gui-wallet/releases)
 
